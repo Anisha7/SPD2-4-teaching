@@ -44,7 +44,7 @@ def twoSum1(a, t):
 
 # Solution V2:
 def twoSum2(a, t):
-    # Time:  O(N)
+    # Time:  O(nlogn) because of sorting
     # Space: O(1) because we are using an inplace sorting algorithm
     a.sort()
     i = 0
@@ -69,6 +69,10 @@ def testTwoSum(fn):
     # With negatives
     res = set(fn([5, 3, 6, 8, 2, 4, 7, -1], 7))
     assert(res == {5, 2} or res == {8, -1} or res == {4, 3})
+    # None
+    assert(fn([1,4,5], 20) == None)
+    # empty array
+    assert(fn([], 2) == None)
 
 ## Problem 2
 # Given an array a of n numbers and a count k find the k 
@@ -76,20 +80,58 @@ def testTwoSum(fn):
 # Example: a=[5, 1, 3, 6, 8, 2, 4, 7], k=3  ⇒  [6, 8, 7]
 
 # Simplifications:
-# 1.
-# 2.
-# 3.
+# 1. Find the one largest value.
+# 2. Assume sorted array.
+# 3. Assume no duplicates
 
 # Psuedocode V1:
+    # sort array
+    # return the last k values from array using list slicing
 
 # Solution V1:
+def kLargestValues1(a, k):
+    # Time:  O(nlogn) because of sorting
+    # Space: O(1) because we are using an inplace sorting algorithm
+    if (len(a) < k):
+        return a
+    a.sort()
+    return a[len(a)-k:]
 
 # Psuedocode V2:
+    # track result array, max size k
+    # loop over array a
+        # loop over result array
+            # add curr item to first empty spot 
+            # or replace anything smaller than it
+    # return result array
 
 # Solution V2:
+def kLargestValues2(a, k):
+    # Time: O(nk) would be the worst case because k < n 
+    # so klogk would be smaller than nk.
+    # Space: O(1) because we are using an inplace sorting algorithm
+    if (len(a) <= k): # O(1)
+        return a
+    
+    result = sorted(a[:k]) # O(klogk) where k < n
+    for item in a: # O(n)
+        for i in range(k-1, 0, -1): # O(k)
+            if item >= result[i]:
+                result.append(item)
+                result.pop(0)
+                break
+    return result
 
 # Test
-
+def testKLargestValues(fn):
+    assert(set(fn([5, 1, 3, 6, 8, 2, 4, 7], 3)) == {6, 8, 7})
+    # Duplicates
+    assert(set(fn([5, 1, 3, 6, 8, 2, 4, 7, 7], 3)) == {8, 7})
+    # Negatives
+    assert(set(fn([0, 1, -2], 3)) == {0, 1, -2})
+    # Not enough values
+    assert(set(fn([5, 1], 3)) == {1, 5})
+    assert(fn([], 1) == [])
 
 ## Problem 3
 # Given two arrays a and b of numbers and a target value t, 
@@ -121,4 +163,10 @@ if __name__ == '__main__':
     print("Passed.")
     print("Testing TwoSum Version 2...")
     testTwoSum(twoSum2)
+    print("Passed.")
+    print("Testing kLargestValues Version 1...")
+    testKLargestValues(kLargestValues1)
+    print("Passed.")
+    print("Testing kLargestValues Version 2...")
+    testKLargestValues(kLargestValues2)
     print("Passed.")
